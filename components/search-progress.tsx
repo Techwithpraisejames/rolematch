@@ -1,0 +1,1 @@
+export function SearchProgress(){return <div role="status" className="empty"><div className="spinner"/><h3>Finding relevant vacancies</h3><p>Analyzing your resume, retrieving web results with Octen and evaluating the available evidence. This may take a minute.</p></div>}

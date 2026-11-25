@@ -1,0 +1,12 @@
+"use client";
+import {useState} from "react";
+import {SearchForm} from "../components/search-form";
+import {SearchProgress} from "../components/search-progress";
+import {JobResults} from "../components/job-results";
+import {sample} from "../lib/sample";
+import type {Job} from "../lib/schemas";
+export default function Home(){
+ const [jobs,setJobs]=useState<Job[]|null>(null),[queries,setQueries]=useState<string[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(""),[sampleMode,setSampleMode]=useState(false),[partial,setPartial]=useState(false);
+ async function run(data:FormData){setBusy(true);setError("");setJobs(null);setSampleMode(false);setPartial(false);try{const r=await fetch("/api/search",{method:"POST",body:data});const result=await r.json();if(!r.ok)throw new Error(result.error||"Search failed.");setJobs(result.jobs);setQueries(result.queries);setPartial(result.partial);}catch(e){setError(e instanceof Error?e.message:"Search failed.");}finally{setBusy(false);}}
+ return <main><header><a className="brand" href="/">rolematch<span>.</span></a><a href="https://github.com/Techwithpraisejames/rolematch" target="_blank" rel="noreferrer">Source code ↗</a></header><section className="hero"><p className="eyebrow">An open-source job discovery project</p><h1>Find work<br/>that fits<span>.</span></h1><p>Turn your experience into a targeted job search. Discover vacancies across the web and see which requirements you match.</p><button className="secondary" disabled={busy} onClick={()=>{setJobs(sample);setQueries([]);setSampleMode(true);setPartial(false);setError("");}}>Explore a sample →</button></section><div className="workspace"><SearchForm onSubmit={run} busy={busy}/><section className="results" aria-label="Job results" aria-live="polite">{busy?<SearchProgress/>:error?<div role="alert" className="empty"><h3>Search unavailable</h3><p>{error}</p></div>:jobs?<JobResults jobs={jobs} queries={queries} sampleMode={sampleMode} partial={partial}/>:<div className="empty"><p className="eyebrow">02 / Opportunities</p><h2>Your next search starts here.</h2><p>Upload your resume to discover potential matches, or explore the fictional sample without using API credits.</p></div>}</section></div><footer><span>Built with Next.js · Search by <a href="https://octen.ai/">Octen</a> · Analysis by OpenAI</span><a href="https://github.com/Techwithpraisejames/rolematch">Build your own ↗</a></footer></main>
+}
