@@ -21,7 +21,7 @@ On Windows PowerShell use `Copy-Item .env.example .env.local` instead of cp. Bef
 1. Extract text from a PDF or DOCX resume (4 MB maximum).
 2. OpenAI extracts professional skills and generates up to three targeted queries.
 3. Octen retrieves web search results concurrently; source URLs and excerpts are retained.
-4. Deduplicate results and evaluate up to 18 excerpts using OpenAI, with Zod validation.
+4. Deduplicate up to 30 results, check supported employer ATS APIs, and evaluate up to 12 verified records using OpenAI with Zod validation. The interface streams actual pipeline stages.
 5. Rank individual potential vacancies by matched requirements divided by matched, missing and unknown requirements.
 
 Octen provides the retrieval layer; it is what allows the application to discover jobs outside the model's training data. OpenAI handles extraction and evidence interpretation, not job discovery.
@@ -33,7 +33,7 @@ Resume + preferences -> OpenAI profile -> Octen search
 
 ## Limits and privacy
 
-Search excerpts may be stale or incomplete. The app excludes explicit closed listings and non-vacancy pages identified by the model, but does not independently verify that the application page remains open. Scores are indicative evidence coverage, not hiring probability. There is no automated application submission. Resume text is sent to OpenAI with store:false; provider retention policies still apply. Basic contact redaction is not comprehensive. Queries are instructed to omit personal data, but review before using sensitive resumes. No resume database is used.
+Search excerpts may be stale or incomplete. The app excludes explicit closed listings and non-vacancy pages identified by the model, but checks supported Greenhouse, Lever and Ashby employer APIs before matching; other sources are excluded. An active API record does not guarantee that applications remain open. Scores are indicative evidence coverage, not hiring probability. There is no automated application submission. Resume text is sent to OpenAI with store:false; provider retention policies still apply. Basic contact redaction is not comprehensive. Queries are instructed to omit personal data, but review before using sensitive resumes. No resume database is used.
 
 Local usage is limited to three attempts per day per process and a configurable global cap (defaults to 30). Local counters reset on restart. Hosted use requires Upstash Redis REST credentials for atomic shared daily counters; the application fails closed without them. The sample mode never calls paid APIs.
 
