@@ -15,5 +15,9 @@ export async function POST(req:Request){
  if(!await allowSearch(ip))return NextResponse.json({error:"Live search is disabled or the daily allowance has been reached. Try the sample."},{status:429});
  const resume=await extractResume(file);
  return NextResponse.json(await discover(resume,role,location,work));
- }catch(e){return NextResponse.json({error:e instanceof Error&&/^(Choose|Upload|No readable|Search failed|OpenAI request|Missing OpenAI)/.test(e.message)?e.message:"Search could not be completed. Check the server configuration and retry."},{status:422});}
+ }catch(e){
+ if(process.env.NODE_ENV==="development"){
+   console.error("[RoleMatch] Search failed", e instanceof Error ? {name:e.name,message:e.message,stack:e.stack} : {name:"UnknownError"});
+ }
+ return NextResponse.json({error:e instanceof Error&&/^(Choose|Upload|No readable|Search failed|OpenAI request|Missing OpenAI)/.test(e.message)?e.message:"Search could not be completed. Check the server configuration and retry."},{status:422});}
 }
